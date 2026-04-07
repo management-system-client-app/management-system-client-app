@@ -20,7 +20,7 @@ export const Navbar = () => {
    <header className=" animate-fade-in  m-0">
     <Topbar/>
     <nav className=" mx-auto pr-4 flex justify-between items-center  ">
-       <div className="bg-[#081e2a] py-8 px-18     [clip-path:polygon(0_0,80%_0,100%_100%,0_100%)] "> <img src="/public/logo.png" alt="" className="w-32 h-auto"/>
+       <div className="bg-[#081e2a] py-8 px-18     [clip-path:polygon(0_0,80%_0,100%_100%,0_100%)] "> <img src="/logo.png" alt="" className="w-32 h-auto"/>
         {/* desktop vertion */}</div>
         <div>
             <div className=" hidden md:flex  gap-5 px-3  " >
