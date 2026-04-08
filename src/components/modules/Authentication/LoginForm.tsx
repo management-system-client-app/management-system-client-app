@@ -1,4 +1,3 @@
-// src/components/modules/Authentication/RegisterForm.tsx
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -7,49 +6,42 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
-const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(1, "Password is required"),
 });
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+type LoginFormData = z.infer<typeof loginSchema>;
 
-export function RegisterForm() {
+export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [agreeTerms, setAgreeTerms] = useState(false);
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
+  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     setError(null);
-    setSuccess(null);
-
-    if (!agreeTerms) {
-      setError("Please agree to the Terms of Service and Privacy Policy");
-      return;
-    }
 
     try {
-      console.log("Register data:", { name: data.name, email: data.email, password: data.password });
-      setSuccess("Registration successful! Please login.");
-      setTimeout(() => navigate("/login"), 2000);
+      console.log("Login data:", { email: data.email, password: data.password });
+      // TODO: API call korbe
+      localStorage.setItem("token", "dummy-token");
+      setError(null);
+      navigate("/");
     } catch (err) {
       console.log('error', err)
-      setError("Something went wrong. Please try again.");
+      setError("Invalid email or password. Please try again.");
     }
   };
 
@@ -66,9 +58,9 @@ export function RegisterForm() {
       >
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 text-center text-white">
-          <h1 className="text-5xl font-bold mb-3">Register</h1>
+          <h1 className="text-5xl font-bold mb-3">Login</h1>
           <p className="text-lg">
-            <span className="text-[#ff970d]">Home</span> &gt; Register
+            <span className="text-[#ff970d]">Home</span> &gt; Login
           </p>
         </div>
       </div>
@@ -88,23 +80,20 @@ export function RegisterForm() {
             </div>
 
             {/* Right Side - Form (2/3 width) */}
-            <div className="lg:w-2/3 p-5">
+            <div className="lg:w-2/3">
 
               {/* Big Heading */}
               <div className="mb-6">
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
-                  Create an account to get started
+                  Welcome back to your account
                 </h2>
               </div>
 
-              {/* 20% Off Badge - Light Orange Badge + Text Same Line */}
-              <div className=" rounded-lg p-4 mb-8 flex items-center gap-3">
-                <span className="bg-orange-500 text-white font-bold px-3 py-1 rounded-lg text-sm">
-                  20% off
-                </span>
-                <span className="text-orange-600 text-sm font-medium">
-                  get 20% off for web signup
-                </span>
+              {/* Welcome Text */}
+              <div className="mb-8">
+                <p className="text-gray-500 dark:text-gray-400">
+                  Please enter your details to sign in
+                </p>
               </div>
 
               {error && (
@@ -112,54 +101,31 @@ export function RegisterForm() {
                   {error}
                 </div>
               )}
-              {success && (
-                <div className="mb-6 p-3 bg-green-100 text-green-700 rounded-xl text-sm">
-                  {success}
-                </div>
-              )}
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {/* Name & Email - Side by Side with enough gap */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="name" className="text-gray-700 dark:text-gray-300 font-semibold">
-                      Name <span className="text-red-500">*</span>
-                    </Label>
-                    <div className="relative mt-2">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="name"
-                        placeholder="Enter your name"
-                        className="pl-10 py-6 rounded-xl"
-                        {...register("name")}
-                      />
-                    </div>
-                    {errors.name && <p className="text-red-500 text-sm mt-2">{errors.name.message}</p>}
+                {/* Email Field */}
+                <div>
+                  <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-semibold">
+                    Email Address <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative mt-2">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      className="pl-10 py-6 rounded-xl"
+                      {...register("email")}
+                    />
                   </div>
-
-                  <div>
-                    <Label htmlFor="email" className="text-gray-700 dark:text-gray-300 font-semibold">
-                      Email <span className="text-red-500">*</span>
-                    </Label>
-                    <div className="relative mt-2">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        className="pl-10 py-6 rounded-xl"
-                        {...register("email")}
-                      />
-                    </div>
-                    {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email.message}</p>}
-                  </div>
+                  {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email.message}</p>}
                 </div>
 
                 {/* Password Field - Full Width */}
                 <div>
                   <div className="flex justify-between items-center mb-1">
                     <Label htmlFor="password" className="text-gray-700 dark:text-gray-300 font-semibold">
-                      Your password <span className="text-red-500">*</span>
+                      Password <span className="text-red-500">*</span>
                     </Label>
                     <button type="button" className="text-sm text-[#4da528] hover:underline">
                       Forgot Password?
@@ -227,34 +193,18 @@ export function RegisterForm() {
                   disabled={isSubmitting}
                   className="w-full bg-[#4da528] hover:bg-[#ff970d] text-white font-semibold py-6 rounded-xl transition-all duration-300 mt-2"
                 >
-                  {isSubmitting ? "Creating Account..." : "Sign In"}
+                  {isSubmitting ? "Logging in..." : "Sign In"}
                 </Button>
-
-                {/* Checkbox with Terms */}
-                <div className="flex items-start gap-3 mt-4">
-                  <input
-                    type="checkbox"
-                    id="terms"
-                    checked={agreeTerms}
-                    onChange={(e) => setAgreeTerms(e.target.checked)}
-                    className="mt-1 w-4 h-4 text-[#4da528] rounded border-gray-300 focus:ring-[#4da528]"
-                  />
-                  <label htmlFor="terms" className="text-xs text-gray-600 dark:text-gray-400">
-                    By signing up, you agree to Customers.ai's{" "}
-                    <a href="#" className="text-[#4da528] hover:underline">Terms Of Service</a> and{" "}
-                    <a href="#" className="text-[#4da528] hover:underline">Privacy Policy</a>
-                  </label>
-                </div>
 
                 {/* Register Link */}
                 <p className="text-center text-sm text-gray-600 dark:text-gray-400 pt-2">
-                  Don't you have an account?{" "}
+                  Don't have an account?{" "}
                   <button
                     type="button"
-                    onClick={() => navigate("/login")}
+                    onClick={() => navigate("/register")}
                     className="text-[#4da528] font-semibold hover:underline"
                   >
-                    Register
+                    Register now
                   </button>
                 </p>
               </form>
