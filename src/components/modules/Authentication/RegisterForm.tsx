@@ -65,12 +65,23 @@ export function RegisterForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Register your account</h1>
-        <p className="text-sm text-muted-foreground">
-          Enter your details to create an account
-        </p>
+    <div className="bg-white dark:bg-gray-900">
+      <Navbar />
+
+      {/* Hero Banner */}
+      <div
+        className="relative h-[250px] w-full bg-cover bg-center bg-no-repeat flex items-center justify-center"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative z-10 text-center text-white">
+          <h1 className="text-5xl font-bold mb-3">Register</h1>
+          <p className="text-lg">
+            <span className="text-[#ff970d]">Home</span> &gt; Register
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-6">
