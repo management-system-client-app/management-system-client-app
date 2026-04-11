@@ -78,7 +78,6 @@ export const Banner = () => {
         <p className="text-[#4da528] font-yester font-normal text-xl md:text-3xl mb-2">
           Explore the world
         </p>
-
         <h1 className="text-white font-jakarta md:font-extrabold text-5xl md:text-7xl font-bold leading-tight">
           Tour{" "}
           <span className="text-[#4da528] font-yester">
