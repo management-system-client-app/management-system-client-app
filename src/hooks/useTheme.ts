@@ -1,3 +1,4 @@
+// src/hooks/useTheme.ts
 import { ThemeProviderContext } from "@/context/theme.context";
 import { useContext } from "react";
 
