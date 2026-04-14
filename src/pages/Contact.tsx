@@ -1,9 +1,9 @@
-import { Phone, MapPin, Mail, PlayCircle } from "lucide-react";
+import { Phone, MapPin, Mail, PlayCircle } from "lucide-react"; 
+import Footer from "@/components/layout/Footer"; 
 
 export default function Contact() {
   return (
-    <div className="bg-white dark:bg-gray-900">
-
+    <div className="bg-white dark:bg-gray-900">  
       {/* Hero Section */}
       <div
         className="relative h-[300px] w-full bg-cover bg-center bg-no-repeat flex items-center justify-center"
