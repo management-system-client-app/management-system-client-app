@@ -1,4 +1,4 @@
-import TravelRegister from "@/assets/banner.png";
+import TravelRegister from "../assets/banner.png";
 import { Link } from "react-router";
 import Logo from "@/assets/icons/Logo";
 import { RegisterForm } from "@/components/modules/Authentication/RegisterForm";
