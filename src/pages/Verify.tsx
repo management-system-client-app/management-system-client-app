@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -8,176 +16,188 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router";
-import { z } from "zod";
+import {
+  useSendOtpMutation,
+  useVerifyOtpMutation,
+} from "@/redux/features/auth/auth.api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Password from "@/components/ui/Password";
-import { useRegisterMutation } from "@/redux/features/auth/auth.api";
+import { Dot } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
+import z from "zod";
 
-const registerSchema = z
-  .object({
-    name: z
-      .string()
-      .min(3, {
-        error: "Name is too short",
-      })
-      .max(50),
-    email: z.email(),
-    password: z.string().min(8, { error: "Password is too short" }),
-    confirmPassword: z
-      .string()
-      .min(8, { error: "Confirm Password is too short" }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Password do not match",
-    path: ["confirmPassword"],
-  });
+const FormSchema = z.object({
+  pin: z.string().min(6, {
+    message: "Your one-time password must be 6 characters.",
+  }),
+});
 
-export function RegisterForm({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [register] = useRegisterMutation();
-  const navigate = useNavigate();
+export default function Verify() {
+  const location = useLocation();
+  // const navigate = useNavigate();
+  const [email] = useState(location.state);
+  const [confirmed, setConfirmed] = useState(false);
+  const [sendOtp] = useSendOtpMutation();
+  const [verifyOtp] = useVerifyOtpMutation();
+  const [timer, setTimer] = useState(5);
 
-  const form = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      pin: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-    const userInfo = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    };
+  const handleSendOtp = async () => {
+    const toastId = toast.loading("Sending OTP");
 
     try {
-      await register(userInfo).unwrap();
+      const res = await sendOtp({ email: email }).unwrap();
 
-      toast.success("User created successfully");
-      navigate("/verify");
-    } catch (error) {
-      console.error(error);
+      if (res.success) {
+        toast.success("OTP Sent", { id: toastId });
+        setConfirmed(true);
+        setTimer(5);
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Register your account</h1>
-        <p className="text-sm text-muted-foreground">
-          Enter your details to create an account
-        </p>
-      </div>
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const toastId = toast.loading("Verifying OTP");
+    const userInfo = {
+      email,
+      otp: data.pin,
+    };
 
-      <div className="grid gap-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormDescription className="sr-only">
-                    This is your public display name.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="john.doe@company.com"
-                      type="email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription className="sr-only">
-                    This is your public display name.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Password {...field} />
-                  </FormControl>
-                  <FormDescription className="sr-only">
-                    This is your public display name.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Password {...field} />
-                  </FormControl>
-                  <FormDescription className="sr-only">
-                    This is your public display name.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full">
+    try {
+      const res = await verifyOtp(userInfo).unwrap();
+      if (res.success) {
+        toast.success("OTP Verified", { id: toastId });
+        setConfirmed(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //! Needed - Turned off for development
+  //   useEffect(() => {
+  //     if (!email) {
+  //       navigate("/");
+  //     }
+  //   }, [email]);
+
+  useEffect(() => {
+    if (!email || !confirmed) {
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [email, confirmed]);
+
+  return (
+    <div className="grid place-content-center h-screen">
+      {confirmed ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Verify your email address</CardTitle>
+            <CardDescription>
+              Please enter the 6-digit code we sent to <br /> {email}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form
+                id="otp-form"
+                onSubmit={form.handleSubmit(onSubmit)}
+                className=" space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="pin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>One-Time Password</FormLabel>
+                      <FormControl>
+                        <InputOTP maxLength={6} {...field}>
+                          <InputOTPGroup>
+                            <InputOTPSlot index={0} />
+                          </InputOTPGroup>
+                          <InputOTPGroup>
+                            <InputOTPSlot index={1} />
+                          </InputOTPGroup>
+                          <InputOTPGroup>
+                            <InputOTPSlot index={2} />
+                          </InputOTPGroup>
+                          <Dot />
+                          <InputOTPGroup>
+                            <InputOTPSlot index={3} />
+                          </InputOTPGroup>
+                          <InputOTPGroup>
+                            <InputOTPSlot index={4} />
+                          </InputOTPGroup>
+                          <InputOTPGroup>
+                            <InputOTPSlot index={5} />
+                          </InputOTPGroup>
+                        </InputOTP>
+                      </FormControl>
+                      <FormDescription>
+                        <Button
+                          onClick={handleSendOtp}
+                          type="button"
+                          variant="link"
+                          disabled={timer !== 0}
+                          className={cn("p-0 m-0", {
+                            "cursor-pointer": timer === 0,
+                            "text-gray-500": timer !== 0,
+                          })}
+                        >
+                          Resent OPT:{" "}
+                        </Button>{" "}
+                        {timer}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button form="otp-form" type="submit">
               Submit
             </Button>
-          </form>
-        </Form>
-
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full cursor-pointer"
-        >
-          Login with Google
-        </Button>
-      </div>
-
-      <div className="text-center text-sm">
-        Already have an account?{" "}
-        <Link to="/login" className="underline underline-offset-4">
-          Login
-        </Link>
-      </div>
+          </CardFooter>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Verify your email address</CardTitle>
+            <CardDescription>
+              We will send you an OTP at <br /> {email}
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="flex justify-end">
+            <Button onClick={handleSendOtp} className="w-[300px]">
+              Confirm
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
     </div>
   );
 }
