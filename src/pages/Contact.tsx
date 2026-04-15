@@ -1,5 +1,4 @@
-import { Phone, MapPin, Mail, PlayCircle } from "lucide-react"; 
-import Footer from "@/components/layout/Footer"; 
+import { Phone, MapPin, Mail, PlayCircle } from "lucide-react";  
 
 export default function Contact() {
   return (
