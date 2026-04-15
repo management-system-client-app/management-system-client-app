@@ -1,3 +1,4 @@
+// src/pages/admin/Analytics.tsx
 import React from 'react'
 
 export default function Analytics() {

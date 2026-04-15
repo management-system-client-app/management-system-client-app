@@ -16,30 +16,90 @@ const navlink = [
   { href: "/contact", label: "Contact" },
 ];
 
+// 🔥 Dashboard dropdown items (same as sidebar)
+const dashboardLinks = [
+  { label: "Dashboard", href: "" },
+  { label: "My Booking", href: "/booking" },
+  { label: "My Listing", href: "/listing" },
+  { label: "Add Tour", href: "/add-tour" },
+  { label: "My Favorites", href: "/favorites" },
+  { label: "My Profile", href: "/profile" },
+];
+
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
   const navigate = useNavigate();
 
   return (
     <header className="animate-fade-in m-0">
       <Topbar />
+
       <nav className="mx-auto pr-4 flex justify-between items-center">
         <div className="bg-[#081e2a] py-8 px-18 [clip-path:polygon(0_0,80%_0,100%_100%,0_100%)]">
           <img src="/logo.png" alt="logo" className="w-32 h-auto" />
         </div>
 
+        {/* ===== Desktop Menu ===== */}
         <div className="hidden md:flex gap-5 px-3">
-          {navlink.map((link, index) => (
-            <button
-              key={index}
-              onClick={() => navigate(link.href)}
-              className="font-jakarta font-semibold text-[16px] px-3 hover:text-[#4da528] rounded-full duration-300 text-[#081e7d] tracking-wide"
-            >
-              {link.label}
-            </button>
-          ))}
+          {navlink.map((link, index) => {
+            // 🔥 ONLY Dashboard updated
+            if (link.label === "Dashboard") {
+              return (
+                <div
+                  key={index}
+                  className="relative"
+                  onMouseEnter={() => setOpenDropdown(true)}
+                  onMouseLeave={() => setOpenDropdown(false)}
+                >
+                  {/* Main Button */}
+                  <button
+                    onClick={() => navigate("/dashboard")}
+                    className="font-jakarta font-semibold text-[16px] px-3 hover:text-[#4da528] rounded-full duration-300 text-[#081e7d] tracking-wide"
+                  >
+                    Dashboard
+                  </button>
+
+                  {/* Dropdown */}
+                  <div
+                    className={`absolute top-10 left-0 w-52 bg-white shadow-xl rounded-md overflow-hidden transition-all duration-300 origin-top z-50
+                    ${
+                      openDropdown
+                        ? "opacity-100 scale-y-100"
+                        : "opacity-0 scale-y-0 pointer-events-none"
+                    }`}
+                  >
+                    {dashboardLinks.map((item, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          navigate(item.href);
+                          setOpenDropdown(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-[#4da528]/10 hover:text-[#4da528]"
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+
+            // 🔹 Other nav links unchanged
+            return (
+              <button
+                key={index}
+                onClick={() => navigate(link.href)}
+                className="font-jakarta font-semibold text-[16px] px-3 hover:text-[#4da528] rounded-full duration-300 text-[#081e7d] tracking-wide"
+              >
+                {link.label}
+              </button>
+            );
+          })}
         </div>
 
+        {/* ===== Right Section ===== */}
         <div className="hidden md:flex items-center gap-6">
           <button className="text-[#081e7d] hover:text-[#4da528] transition-colors">
             <Search size={20} />
@@ -71,6 +131,7 @@ export const Navbar = () => {
           </button>
         </div>
 
+        {/* ===== Mobile ===== */}
         <div className="md:hidden flex items-center gap-2">
           <ModeToggle />
           <button
@@ -82,7 +143,7 @@ export const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Sidebar */}
+      {/* ===== Mobile Sidebar (UNCHANGED) ===== */}
       {isMobileMenuOpen && (
         <>
           <div
