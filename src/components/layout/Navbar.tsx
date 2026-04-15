@@ -17,12 +17,9 @@ import { useAppDispatch } from "@/redux/hook";
 import { FaXTwitter } from "react-icons/fa6";
 
 const navlink = [
-  { href: "/", label: "Home" },
-  { href: "/tour", label: "Tour" },
-  { href: "/destination", label: "Destination" },
-  { href: "/blog", label: "Blog" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "Home", role: "PUBLIC" },
+  { href: "/about", label: "About", role: "PUBLIC" },
+  { href: "/tours", label: "Tours", role: "PUBLIC" }
 ];
  
 

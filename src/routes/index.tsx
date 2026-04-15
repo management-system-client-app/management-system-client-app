@@ -1,13 +1,9 @@
-import App from "@/App";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Dashboard } from "@/pages/user_Dahsboard/Dashboard/Dashboard"; // Added by Atikur
-import Analytics from "@/pages/admin/Analytics";
-import Contact from "@/pages/Contact";
-// import About from "@/pages/About";
+import App from "@/App"; 
+import Homepage from "@/pages/Homepage";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Verify from "@/pages/Verify"; 
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router" 
 
 export const router = createBrowserRouter([
   {
@@ -15,27 +11,12 @@ export const router = createBrowserRouter([
     path: "/",
     children: [
       {
-        Component: Contact,
-        path: "contact",
-      },
+        Component: Homepage,
+        index: true,
+      }, 
     ],
   },
-  {
-    Component: DashboardLayout,
-    path: "/admin",
-    children: [
-      {
-        Component: Analytics,
-        path: "analytics",
-      },
-    ],
-  },
-  // Added By Atik For user Dashboard
-    {
-    Component: Dashboard, 
-    path: "/dashboard",
-  },
-
+   
   {
     Component: Login,
     path: "/login",
@@ -48,4 +29,5 @@ export const router = createBrowserRouter([
     Component: Verify,
     path: "/verify",
   },
+   
 ]);
