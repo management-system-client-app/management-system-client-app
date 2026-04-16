@@ -26,7 +26,7 @@ const registerSchema = z
         error: "Name is too short",
       })
       .max(50),
-    email: z.email(),
+    email: z.string().email(),
     password: z.string().min(8, { error: "Password is too short" }),
     confirmPassword: z
       .string()
@@ -65,9 +65,11 @@ export function RegisterForm({
       await register(userInfo).unwrap();
 
       toast.success("User created successfully");
-      navigate("/verify");
+      // ✅ এখানে পরিবর্তন করা হয়েছে - email পাস করা হচ্ছে
+      navigate("/verify", { state: data.email });
     } catch (error) {
       console.error(error);
+      toast.error("Registration failed. Please try again.");
     }
   };
 
