@@ -64,8 +64,8 @@ export function RegisterForm({
     try {
       await register(userInfo).unwrap();
 
-      toast.success("User created successfully");
-      // ✅ এখানে পরিবর্তন করা হয়েছে - email পাস করা হচ্ছে
+      toast.success("User created successfully"); 
+      
       navigate("/verify", { state: data.email });
     } catch (error) {
       console.error(error);
