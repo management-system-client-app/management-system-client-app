@@ -1,5 +1,4 @@
-// src/pages/admin/Analytics.tsx
-import React from 'react'
+// src/pages/admin/Analytics.tsx  
 
 export default function Analytics() {
   return (

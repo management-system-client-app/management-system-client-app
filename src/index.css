@@ -4,9 +4,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
-
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -142,9 +139,7 @@
   }
   .font-yester {
   font-family: "Yesteryear", cursive;
-  
+
 }
-
-
 
 }

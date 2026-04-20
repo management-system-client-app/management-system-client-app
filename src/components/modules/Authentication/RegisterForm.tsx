@@ -14,9 +14,9 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Password from "@/components/ui/Password"; 
-import { toast } from "sonner";
+import Password from "@/components/ui/Password";
 import { useRegisterMutation } from "@/redux/features/auth/auth.api";
+import { toast } from "sonner";
 
 const registerSchema = z
   .object({
@@ -62,8 +62,8 @@ export function RegisterForm({
     };
 
     try {
-      const result = await register(userInfo).unwrap();
-      console.log(result);
+      await register(userInfo).unwrap();
+
       toast.success("User created successfully");
       navigate("/verify");
     } catch (error) {

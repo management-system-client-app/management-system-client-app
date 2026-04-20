@@ -42,7 +42,7 @@ const FormSchema = z.object({
 
 export default function Verify() {
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [email] = useState(location.state);
   const [confirmed, setConfirmed] = useState(false);
   const [sendOtp] = useSendOtpMutation();
@@ -104,7 +104,6 @@ export default function Verify() {
 
     const timerId = setInterval(() => {
       setTimer((prev) => (prev > 0 ? prev - 1 : 0));
-      console.log("Tick");
     }, 1000);
 
     return () => clearInterval(timerId);

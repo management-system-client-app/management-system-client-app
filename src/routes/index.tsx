@@ -1,13 +1,13 @@
-import App from "@/App";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Dashboard } from "@/pages/user_Dahsboard/Dashboard/Dashboard"; // Added by Atikur
-import Analytics from "@/pages/admin/Analytics";
-import Contact from "@/pages/Contact";
-// import About from "@/pages/About";
+import App from "@/App"; 
+import DashboardLayout from "@/components/layout/DashboardLayout"; 
+import Homepage from "@/pages/Homepage";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import booking from "@/pages/User/booking";
 import Verify from "@/pages/Verify"; 
-import { createBrowserRouter } from "react-router";
+import { generateRoutes } from "@/utils/generarateRoutes";
+import { createBrowserRouter } from "react-router" 
+import { adminSidebarItems } from "./adminSidebarItems";
 
 export const router = createBrowserRouter([
   {
@@ -15,27 +15,28 @@ export const router = createBrowserRouter([
     path: "/",
     children: [
       {
-        Component: Contact,
-        path: "contact",
-      },
+        Component: Homepage,
+        index: true,
+      }, 
     ],
   },
   {
     Component: DashboardLayout,
     path: "/admin",
+    children:[...generateRoutes(adminSidebarItems)]
+  },
+  {
+    Component: DashboardLayout,
+    path: "/user",
     children: [
-      {
-        Component: Analytics,
-        path: "analytics",
-      },
-    ],
+     { 
+        Component: booking,
+        path: "booking",
+      
+      }
+    ]
   },
-  // Added By Atik For user Dashboard
-    {
-    Component: Dashboard, 
-    path: "/dashboard",
-  },
-
+   
   {
     Component: Login,
     path: "/login",
@@ -48,4 +49,5 @@ export const router = createBrowserRouter([
     Component: Verify,
     path: "/verify",
   },
+   
 ]);
